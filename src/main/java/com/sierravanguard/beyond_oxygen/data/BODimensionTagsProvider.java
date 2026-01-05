@@ -5,7 +5,6 @@ import com.sierravanguard.beyond_oxygen.tags.BODimensionTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -22,8 +21,6 @@ public class BODimensionTagsProvider extends DataRegistryTagsProvider<Level> {
     @Override
     protected void addTags(HolderLookup.@NotNull Provider lookupProvider) {
         this.tag(BODimensionTags.UNBREATHABLE)
-                .add(ResourceKey.create(Registries.DIMENSION, new ResourceLocation("minecraft", "the_end")))
-
                 .addOptional(new ResourceLocation("cosmos", "solar_system"))
                 .addOptional(new ResourceLocation("cosmos", "mercury_wasteland"))
                 .addOptional(new ResourceLocation("cosmos", "venuslands"))
@@ -44,12 +41,10 @@ public class BODimensionTagsProvider extends DataRegistryTagsProvider<Level> {
                 .addOptional(new ResourceLocation("cosmos", "j_1900"));
 
         this.tag(BODimensionTags.COLD)
-                .add(ResourceKey.create(Registries.DIMENSION, new ResourceLocation("minecraft", "the_end")))
                 .addOptional(new ResourceLocation("cosmos", "plutowastelands"))
                 .addOptional(new ResourceLocation("cosmos", "glacio_lands"));
 
         this.tag(BODimensionTags.HOT)
-                .add(ResourceKey.create(Registries.DIMENSION, new ResourceLocation("minecraft", "the_nether")))
                 .addOptional(new ResourceLocation("cosmos", "mercury_wasteland"))
                 .addOptional(new ResourceLocation("cosmos", "venuslands"));
 

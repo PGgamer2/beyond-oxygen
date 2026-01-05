@@ -1,6 +1,5 @@
 {
   "values": [
-    "minecraft:the_nether",
     {
       "id": "cosmos:mercury_wasteland",
       "required": false

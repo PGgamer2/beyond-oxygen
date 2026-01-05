@@ -1,6 +1,5 @@
 {
   "values": [
-    "minecraft:the_end",
     {
       "id": "cosmos:solar_system",
       "required": false

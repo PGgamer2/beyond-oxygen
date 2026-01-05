@@ -1,9 +1,14 @@
     package com.sierravanguard.beyond_oxygen;
 
+    import com.sierravanguard.beyond_oxygen.registry.BODimensions;
+    import net.minecraft.resources.ResourceLocation;
     import net.minecraftforge.common.ForgeConfigSpec;
     import net.minecraftforge.eventbus.api.SubscribeEvent;
     import net.minecraftforge.fml.common.Mod;
     import net.minecraftforge.fml.event.config.ModConfigEvent;
+
+    import java.util.ArrayList;
+    import java.util.List;
 
     @Mod.EventBusSubscriber(modid = BeyondOxygen.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public class BOConfig {
@@ -14,8 +19,14 @@
         private static final ForgeConfigSpec.ConfigValue<Integer> TIME_TO_IMPLODE;
 
         private static final ForgeConfigSpec.BooleanValue UNBREATHABLE_DIMENSIONS;
+        private static final ForgeConfigSpec.ConfigValue<List<? extends String>> UNBREATHABLE_DIMENSIONS_WHITELIST;
+        private static final ForgeConfigSpec.ConfigValue<List<? extends String>> UNBREATHABLE_DIMENSIONS_BLACKLIST;
         private static final ForgeConfigSpec.BooleanValue COLD_DIMENSIONS;
+        private static final ForgeConfigSpec.ConfigValue<List<? extends String>> COLD_DIMENSIONS_WHITELIST;
+        private static final ForgeConfigSpec.ConfigValue<List<? extends String>> COLD_DIMENSIONS_BLACKLIST;
         private static final ForgeConfigSpec.BooleanValue HOT_DIMENSIONS;
+        private static final ForgeConfigSpec.ConfigValue<List<? extends String>> HOT_DIMENSIONS_WHITELIST;
+        private static final ForgeConfigSpec.ConfigValue<List<? extends String>> HOT_DIMENSIONS_BLACKLIST;
         private static final ForgeConfigSpec.BooleanValue ENABLE_BABY_MODE;
         private static final ForgeConfigSpec.DoubleValue DEFAULT_DENSITY;
 
@@ -47,14 +58,36 @@
             UNBREATHABLE_DIMENSIONS = builder
                     .comment("Enable Beyond Oxygen unbreathable dimensions")
                     .define("unbreathable_dimensions", true);
+            UNBREATHABLE_DIMENSIONS_WHITELIST = builder
+                    .comment("Dimensions that should be considered unbreathable. Adds to the list already defined by the tag \"beyond_oxgyen:unbreathable\".")
+                    .defineList("unbreathableDimensionsWhitelist", List.of("minecraft:the_end"), BOConfig::isValidResourceLocation);
+            UNBREATHABLE_DIMENSIONS_BLACKLIST = builder
+                    .comment("Dimensions that should not be considered unbreathable. Removes from the list already defined by the tag \"beyond_oxgyen:unbreathable\", and the \"unbreathableDimensionsWhitelist\" config option.")
+                    .defineList("unbreathableDimensionsBlacklist", List.of(), BOConfig::isValidResourceLocation);
             COLD_DIMENSIONS = builder
                     .comment("Enable Beyond Oxygen cold dimensions")
                     .define("cold_dimensions", true);
+            COLD_DIMENSIONS_WHITELIST = builder
+                    .comment("Dimensions that should be considered cold. Adds to the list already defined by the tag \"beyond_oxgyen:cold\".")
+                    .defineList("coldDimensionsWhitelist", List.of("minecraft:the_end"), BOConfig::isValidResourceLocation);
+            COLD_DIMENSIONS_BLACKLIST = builder
+                    .comment("Dimensions that should not be considered cold. Removes from the list already defined by the tag \"beyond_oxgyen:cold\", and the \"coldDimensionsWhitelist\" config option.")
+                    .defineList("coldDimensionsBlacklist", List.of(), BOConfig::isValidResourceLocation);
             HOT_DIMENSIONS = builder
                     .comment("Enable Beyond Oxygen hot dimensions")
                     .define("hot_dimensions", true);
+            HOT_DIMENSIONS_WHITELIST = builder
+                    .comment("Dimensions that should be considered hot. Adds to the list already defined by the tag \"beyond_oxgyen:cold\".")
+                    .defineList("hotDimensionsWhitelist", List.of("minecraft:the_nether"), BOConfig::isValidResourceLocation);
+            HOT_DIMENSIONS_BLACKLIST = builder
+                    .comment("Dimensions that should not be considered hot. Removes from the list already defined by the tag \"beyond_oxgyen:hot\", and the \"hotDimensionsWhitelist\" config option.")
+                    .defineList("hotDimensionsBlacklist", List.of(), BOConfig::isValidResourceLocation);
 
             SPEC = builder.build();
+        }
+
+        private static boolean isValidResourceLocation(Object value) {
+            return value instanceof String str && ResourceLocation.isValidResourceLocation(str);
         }
 
         @SubscribeEvent
@@ -70,8 +103,14 @@
         private static int timeToImplode;
 
         private static boolean enableUnbreathableDimensions;
+        private static List<ResourceLocation> unbreathableDimensionsWhitelist = List.of();
+        private static List<ResourceLocation> unbreathableDimensionsBlacklist = List.of();
         private static boolean enableColdDimensions;
+        private static List<ResourceLocation> coldDimensionsWhitelist = List.of();
+        private static List<ResourceLocation> coldDimensionsBlacklist = List.of();
         private static boolean enableHotDimensions;
+        private static List<ResourceLocation> hotDimensionsWhitelist = List.of();
+        private static List<ResourceLocation> hotDimensionsBlacklist = List.of();
         private static boolean babyMode;
 
         //we load all the config values into more friendly versions here, and can process custom syntax issues.
@@ -85,8 +124,26 @@
             timeToImplode = TIME_TO_IMPLODE.get();
 
             enableUnbreathableDimensions = UNBREATHABLE_DIMENSIONS.get();
+            unbreathableDimensionsWhitelist = toRlList(UNBREATHABLE_DIMENSIONS_WHITELIST);
+            unbreathableDimensionsBlacklist = toRlList(UNBREATHABLE_DIMENSIONS_BLACKLIST);
             enableColdDimensions = COLD_DIMENSIONS.get();
+            coldDimensionsWhitelist = toRlList(COLD_DIMENSIONS_WHITELIST);
+            coldDimensionsBlacklist = toRlList(COLD_DIMENSIONS_BLACKLIST);
             enableHotDimensions = HOT_DIMENSIONS.get();
+            hotDimensionsWhitelist = toRlList(HOT_DIMENSIONS_WHITELIST);
+            hotDimensionsBlacklist = toRlList(HOT_DIMENSIONS_BLACKLIST);
+
+            BODimensions.updateSets();
+        }
+
+        public static List<ResourceLocation> toRlList(ForgeConfigSpec.ConfigValue<List<? extends String>> configValue) {
+            return toRlList(configValue.get());
+        }
+
+        public static List<ResourceLocation> toRlList(List<? extends String> list) {
+            List<ResourceLocation> rlList = new ArrayList<>(list.size());
+            list.forEach(str -> rlList.add(new ResourceLocation(str)));
+            return rlList;
         }
 
         public static boolean getBabyMode() {
@@ -117,11 +174,35 @@
             return enableUnbreathableDimensions;
         }
 
+        public static List<ResourceLocation> unbreathableDimensionsWhitelist() {
+            return unbreathableDimensionsWhitelist;
+        }
+
+        public static List<ResourceLocation> unbreathableDimensionsBlacklist() {
+            return unbreathableDimensionsBlacklist;
+        }
+
         public static boolean enableColdDimensions() {
             return enableColdDimensions;
         }
 
+        public static List<ResourceLocation> coldDimensionsWhitelist() {
+            return coldDimensionsWhitelist;
+        }
+
+        public static List<ResourceLocation> coldDimensionsBlacklist() {
+            return coldDimensionsBlacklist;
+        }
+
         public static boolean enableHotDimensions() {
             return enableHotDimensions;
+        }
+
+        public static List<ResourceLocation> hotDimensionsWhitelist() {
+            return hotDimensionsWhitelist;
+        }
+
+        public static List<ResourceLocation> hotDimensionsBlacklist() {
+            return hotDimensionsBlacklist;
         }
     }
