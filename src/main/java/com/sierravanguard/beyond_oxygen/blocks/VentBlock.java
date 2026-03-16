@@ -100,7 +100,7 @@ public class VentBlock extends Block implements EntityBlock {
             player.displayClientMessage(Component.literal("Thermal regulator removed."), true);
             return InteractionResult.SUCCESS;
         }
-        if (!held.isEmpty() && held.is(BOItems.THERMAL_REGULATOR.get()) && !vent.temperatureRegulatorApplied) {
+        if (!isEmptyHand && held.is(BOItems.THERMAL_REGULATOR.get()) && !vent.temperatureRegulatorApplied) {
             vent.temperatureRegulatorApplied = true;
             vent.temperatureRegulatorCooldown = 40;
             vent.setChanged();
@@ -117,11 +117,12 @@ public class VentBlock extends Block implements EntityBlock {
         }
 
         boolean sealed = vent.getHermeticArea().isHermetic();
+        boolean hasAir = vent.getHermeticArea().hasAir();
         float oxygenRate = sealed ? vent.getCurrentOxygenRate() : 0f;
 
         NetworkHandler.CHANNEL.send(
                 PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
-                new VentInfoMessage(sealed, oxygenRate)
+                new VentInfoMessage(sealed, hasAir, oxygenRate)
         );
 
         return InteractionResult.SUCCESS;
