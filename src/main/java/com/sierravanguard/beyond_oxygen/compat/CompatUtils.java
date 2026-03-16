@@ -5,9 +5,11 @@ import com.sierravanguard.beyond_oxygen.utils.CryoBedManager;
 import com.sierravanguard.beyond_oxygen.utils.HermeticArea;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fluids.FluidType;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Vector3d;
 
@@ -77,5 +79,10 @@ public class CompatUtils {
     public static BlockPos getCryoBedRespawnPosition(ServerLevel level, CryoBedManager.CryoBedReference cryoBed) {
         if (CompatLoader.VALKYRIEN_SKIES.isLoaded()) return VSCompat.getCryoBedRespawnPosition(level, cryoBed);
         return cryoBed.worldPos();
+    }
+
+    public static FluidType getEntityFluidType(Entity entity) {
+        if (CompatLoader.VALKYRIEN_SKIES.isLoaded()) return VSCompat.getEntityFluidType(entity);
+        return entity.getEyeInFluidType();
     }
 }

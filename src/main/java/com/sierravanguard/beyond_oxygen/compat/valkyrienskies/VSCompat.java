@@ -1,12 +1,15 @@
 package com.sierravanguard.beyond_oxygen.compat.valkyrienskies;
 
-import com.sierravanguard.beyond_oxygen.BeyondOxygen;
 import com.sierravanguard.beyond_oxygen.utils.CryoBedManager;
 import com.sierravanguard.beyond_oxygen.utils.HermeticArea;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.fluids.FluidType;
 import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Vector3d;
 import org.valkyrienskies.core.api.ships.*;
@@ -124,5 +127,32 @@ public class VSCompat {
             }
         }
         return cryoBed.worldPos();
+    }
+
+    public static FluidType getEntityFluidType(Entity entity) {
+        Level level = entity.level();
+        Iterable<Ship> ships = VSGameUtilsKt.getShipsIntersecting(level, AABB.ofSize(entity.getEyePosition(), 1, 1, 1));
+
+        var ref = new Object() {
+            FluidType fluidType = level.getFluidState(BlockPos.containing(entity.getEyePosition())).getFluidType();
+        };
+        ships.forEach(ship -> {
+            Vector3d shipPos = ship.getTransform()
+                    .getWorldToShip()
+                    .transformPosition(entity.getX(), entity.getEyeY(), entity.getZ(), new Vector3d());
+
+            BlockPos transBlockPos = new BlockPos(
+                    Mth.floor(shipPos.x),
+                    Mth.floor(shipPos.y),
+                    Mth.floor(shipPos.z)
+            );
+
+            FluidType shipFluidType = level.getFluidState(transBlockPos).getFluidType();
+            if (!shipFluidType.isAir()) {
+                ref.fluidType = shipFluidType;
+            }
+        });
+
+        return ref.fluidType;
     }
 }

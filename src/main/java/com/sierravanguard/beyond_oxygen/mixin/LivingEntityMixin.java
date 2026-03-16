@@ -3,28 +3,26 @@ package com.sierravanguard.beyond_oxygen.mixin;
 import com.sierravanguard.beyond_oxygen.compat.CompatLoader;
 import com.sierravanguard.beyond_oxygen.compat.CompatUtils;
 import com.sierravanguard.beyond_oxygen.extensions.ILivingEntityExtension;
-import com.sierravanguard.beyond_oxygen.network.NetworkHandler;
 import com.sierravanguard.beyond_oxygen.registry.BODamageSources;
 import com.sierravanguard.beyond_oxygen.registry.BODimensions;
 import com.sierravanguard.beyond_oxygen.registry.BOEffects;
 import com.sierravanguard.beyond_oxygen.tags.BOEntityTypeTags;
 import com.sierravanguard.beyond_oxygen.utils.*;
 import net.minecraft.core.BlockPos;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.WaterAnimal;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.ModList;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.event.entity.living.LivingBreatheEvent;
+import net.minecraftforge.fluids.FluidType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 
@@ -79,7 +77,7 @@ public abstract class LivingEntityMixin extends Entity implements ILivingEntityE
             }
         }
 
-        if ((!(self instanceof WaterAnimal) || self.isInWaterOrBubble()) && self.hasEffect(BOEffects.OXYGEN_SATURATION.get())) {
+        if (self.hasEffect(BOEffects.OXYGEN_SATURATION.get()) && !self.canDrownInFluidType(Fluids.EMPTY.getFluidType())) {
             self.setAirSupply(self.getMaxAirSupply());
         }
     }
@@ -93,27 +91,17 @@ public abstract class LivingEntityMixin extends Entity implements ILivingEntityE
         }
     }
 
-    @Inject(method = "increaseAirSupply", at = @At("HEAD"), cancellable = true)
-    private void beyondoxygen$preventAirRefillInVacuum(int airIncrement, CallbackInfoReturnable<Integer> cir) {
+    @Override
+    public void beyond_oxygen$breathe(LivingBreatheEvent event) {
         LivingEntity self = beyond_oxygen$self();
-        if (self.hasEffect(BOEffects.OXYGEN_SATURATION.get()) || beyond_oxygen$getAreasIn().stream().anyMatch(HermeticArea::hasAir)) return;
-        BlockPos headPos = BlockPos.containing(self.getX(), self.getEyeY(), self.getZ());
-        boolean headInWater = self.level().getFluidState(headPos).is(FluidTags.WATER);
-        if (headInWater) {
-            cir.setReturnValue(self.getAirSupply());
-        }
-    }
+        FluidType fluidtype = CompatUtils.getEntityFluidType(self);
 
-    @Inject(method = "baseTick", at = @At("HEAD"))
-    private void beyondoxygen$decrementAirInVacuum(CallbackInfo ci) {
-        LivingEntity self = beyond_oxygen$self();
-        if (self.hasEffect(BOEffects.OXYGEN_SATURATION.get()) || beyond_oxygen$getAreasIn().stream().anyMatch(HermeticArea::hasAir)) return;
-        int air = self.getAirSupply() - 1;
-        self.setAirSupply(air);
-        if (air == -20) {
-            self.setAirSupply(0);
-            self.hurt(self.damageSources().drown(), 2.0F);
-        }
+        boolean isAir = fluidtype.isAir() || self.level().getBlockState(BlockPos.containing(self.getX(), self.getEyeY(), self.getZ())).is(Blocks.BUBBLE_COLUMN)
+                || beyond_oxygen$getAreasIn().stream().anyMatch(HermeticArea::hasAir) || self.hasEffect(BOEffects.OXYGEN_SATURATION.get());
+        boolean canBreathe = !self.canDrownInFluidType(fluidtype) || MobEffectUtil.hasWaterBreathing(self) || (self instanceof Player && ((Player)self).getAbilities().invulnerable);
+
+        event.setCanBreathe(canBreathe || isAir);
+        event.setCanRefillAir(isAir);
     }
 }
 

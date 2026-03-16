@@ -27,6 +27,7 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
+import net.minecraftforge.event.entity.living.LivingBreatheEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -168,6 +169,11 @@ public class ModEvents {
     @SubscribeEvent
     public static void onLivingTick(LivingEvent.LivingTickEvent event) {
         ((ILivingEntityExtension) event.getEntity()).beyond_oxygen$tick();
+    }
+
+    @SubscribeEvent
+    public static void onLivingBreatheEvent(LivingBreatheEvent event) {
+        ((ILivingEntityExtension) event.getEntity()).beyond_oxygen$breathe(event);
     }
 
     @SubscribeEvent
