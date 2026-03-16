@@ -2,6 +2,7 @@ package com.sierravanguard.beyond_oxygen.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.sierravanguard.beyond_oxygen.BeyondOxygen;
 import com.sierravanguard.beyond_oxygen.blocks.entity.BubbleGeneratorBlockEntity;
 import com.sierravanguard.beyond_oxygen.client.model.BubbleModel;
 import com.sierravanguard.beyond_oxygen.client.model.ObjModel;
@@ -15,9 +16,11 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
+import java.util.Objects;
+
 public class BubbleGeneratorBlockEntityRenderer implements net.minecraft.client.renderer.blockentity.BlockEntityRenderer<BubbleGeneratorBlockEntity> {
     private static final RenderType RENDER_TYPE = RenderType.entityTranslucent(
-            new ResourceLocation("beyond_oxygen", "textures/entity/bubble.png")
+            Objects.requireNonNull(ResourceLocation.tryBuild(BeyondOxygen.MODID, "textures/entity/bubble.png"))
     );
 
     public BubbleGeneratorBlockEntityRenderer(net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context context) {}

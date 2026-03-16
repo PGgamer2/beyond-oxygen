@@ -24,7 +24,7 @@ public class BubbleModel {
 
     private static void reloadResources(ResourceManager resourceManager) {
         try {
-            bubbleModel = ObjModel.load(resourceManager, new ResourceLocation(BeyondOxygen.MODID, "models/entity/bubble.obj"));
+            bubbleModel = ObjModel.load(resourceManager, ResourceLocation.tryBuild(BeyondOxygen.MODID, "models/entity/bubble.obj"));
         } catch (Throwable t) {
             bubbleModel = null;
             BeyondOxygen.LOGGER.error("Failed to load oxygen bubble model!", t);

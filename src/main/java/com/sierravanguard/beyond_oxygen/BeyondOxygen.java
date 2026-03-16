@@ -25,9 +25,8 @@ public class BeyondOxygen {
     public static final String MODID = "beyond_oxygen";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public BeyondOxygen() {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        ModLoadingContext context = ModLoadingContext.get();
+    public BeyondOxygen(FMLJavaModLoadingContext context) {
+        IEventBus modEventBus = context.getModEventBus();
         context.registerConfig(ModConfig.Type.COMMON, BOConfig.SPEC);
         context.registerConfig(ModConfig.Type.SERVER, BOServerConfig.SPEC);
         BOBlocks.BLOCKS.register(modEventBus);

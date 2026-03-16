@@ -18,6 +18,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Objects;
 import java.util.StringJoiner;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -28,7 +29,7 @@ public class BOOxygenSources {
     public static final int DEFAULT_PRIORITY_PLAYER_INVENTORY = 2000;
     public static final int DEFAULT_PRIORITY_HELD_ITEMS = 3000;
 
-    public static final ResourceKey<Registry<OxygenSource<?>>> REGISTRY_KEY = ResourceKey.createRegistryKey(new ResourceLocation(BeyondOxygen.MODID, "oxygen_sources"));
+    public static final ResourceKey<Registry<OxygenSource<?>>> REGISTRY_KEY = ResourceKey.createRegistryKey(Objects.requireNonNull(ResourceLocation.tryBuild(BeyondOxygen.MODID, "oxygen_sources")));
     private static DeferredRegister<OxygenSource<?>> registry = DeferredRegister.create(REGISTRY_KEY, BeyondOxygen.MODID);
     public static final Supplier<IForgeRegistry<OxygenSource<?>>> REGISTRY = registry.makeRegistry(() -> RegistryBuilder.of(REGISTRY_KEY.location()));
 

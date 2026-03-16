@@ -20,8 +20,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.LazyOptional;
 
+import java.util.Objects;
+
 public class SpacesuitHelmetLayer<T extends LivingEntity> extends RenderLayer<T, HumanoidModel<T>> {
-    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(new ResourceLocation(BeyondOxygen.MODID, "armor"), "openable_helmet");
+    public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(Objects.requireNonNull(ResourceLocation.tryBuild(BeyondOxygen.MODID, "armor")), "openable_helmet");
     public final OpenableHelmetModel<T> model;
 
     public SpacesuitHelmetLayer(RenderLayerParent<T, HumanoidModel<T>> parent, EntityModelSet modelSet) {

@@ -6,6 +6,8 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
+import java.util.Objects;
+
 public class BOItemTags {
     public static final TagKey<Item> SPACE_SUIT_HELMETS = create("armor/space_suit/helmets");
     public static final TagKey<Item> SPACE_SUIT_CHESTPLATES = create("armor/space_suit/chestplates");
@@ -30,25 +32,25 @@ public class BOItemTags {
     public static final TagKey<Item> BREATHABLES = create("breathables");
 
 
-    public static final TagKey<Item> FORGE_STEEL_INGOT = ItemTags.create(new ResourceLocation("forge", "ingots/steel"));
-    public static final TagKey<Item> STEEL_INGOT = ItemTags.create(new ResourceLocation("c", "ingots/steel"));
-    public static final TagKey<Item> REFINED_OBSIDIAN_INGOT = ItemTags.create(new ResourceLocation("c", "ingots/refined_obsidian"));
-    public static final TagKey<Item> REFINED_GLOWSTONE_INGOT = ItemTags.create(new ResourceLocation("c", "ingots/refined_glowstone"));
+    public static final TagKey<Item> FORGE_STEEL_INGOT = ItemTags.create(ResourceLocation.parse("forge:ingots/steel"));
+    public static final TagKey<Item> STEEL_INGOT = ItemTags.create(ResourceLocation.parse("c:ingots/steel"));
+    public static final TagKey<Item> REFINED_OBSIDIAN_INGOT = ItemTags.create(ResourceLocation.parse("c:ingots/refined_obsidian"));
+    public static final TagKey<Item> REFINED_GLOWSTONE_INGOT = ItemTags.create(ResourceLocation.parse("c:ingots/refined_glowstone"));
 
-    public static final TagKey<Item> IRON_NUGGET = ItemTags.create(new ResourceLocation("c", "nuggets/iron"));
+    public static final TagKey<Item> IRON_NUGGET = ItemTags.create(ResourceLocation.parse("c:nuggets/iron"));
 
-    public static final TagKey<Item> REDSTONE_DUST = ItemTags.create(new ResourceLocation("c", "dusts/redstone"));
+    public static final TagKey<Item> REDSTONE_DUST = ItemTags.create(ResourceLocation.parse("c:dusts/redstone"));
 
-    public static final TagKey<Item> POTATO = ItemTags.create(new ResourceLocation("c", "crops/potato"));
-    public static final TagKey<Item> BREAD = ItemTags.create(new ResourceLocation("c", "foods/bread"));
+    public static final TagKey<Item> POTATO = ItemTags.create(ResourceLocation.parse("c:crops/potato"));
+    public static final TagKey<Item> BREAD = ItemTags.create(ResourceLocation.parse("c:foods/bread"));
 
-    public static final TagKey<Item> GLASS_BLOCK = ItemTags.create(new ResourceLocation("c", "glass_blocks"));
+    public static final TagKey<Item> GLASS_BLOCK = ItemTags.create(ResourceLocation.parse("c:glass_blocks"));
 
 
     //curios compat
-    public static final TagKey<Item> CURIOS_BACK_SLOT = ItemTags.create(new ResourceLocation("curios", "back"));
+    public static final TagKey<Item> CURIOS_BACK_SLOT = ItemTags.create(ResourceLocation.parse("curios:back"));
 
     private static TagKey<Item> create(String path) {
-        return ItemTags.create(new ResourceLocation(BeyondOxygen.MODID, path));
+        return ItemTags.create(Objects.requireNonNull(ResourceLocation.tryBuild(BeyondOxygen.MODID, path)));
     }
 }

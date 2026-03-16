@@ -142,7 +142,7 @@
 
         public static List<ResourceLocation> toRlList(List<? extends String> list) {
             List<ResourceLocation> rlList = new ArrayList<>(list.size());
-            list.forEach(str -> rlList.add(new ResourceLocation(str)));
+            list.forEach(str -> rlList.add(ResourceLocation.parse(str)));
             return rlList;
         }
 

@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class HelmetState implements ICapabilitySerializable<CompoundTag> {
-    public static final ResourceLocation ID = new ResourceLocation(BeyondOxygen.MODID, "helmet_state");
+    public static final ResourceLocation ID = ResourceLocation.tryBuild(BeyondOxygen.MODID, "helmet_state");
     private static final Capability<HelmetState> CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
     public static LazyOptional<HelmetState> get(LivingEntity entity) {

@@ -12,7 +12,7 @@ public class BOEntityTypeTags {
     public static final TagKey<EntityType<?>> SURVIVES_HOT = create("survives_hot");
 
     private static TagKey<EntityType<?>> create(String path) {
-        return create(new ResourceLocation(BeyondOxygen.MODID, path));
+        return create(ResourceLocation.tryBuild(BeyondOxygen.MODID, path));
     }
 
     private static TagKey<EntityType<?>> create(ResourceLocation location) {

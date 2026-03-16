@@ -17,7 +17,7 @@ import java.util.function.Function;
 public class NetworkHandler {
     private static final String PROTOCOL_VERSION = "3";
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
-            new ResourceLocation(BeyondOxygen.MODID, "network"),
+            ResourceLocation.tryBuild(BeyondOxygen.MODID, "network"),
             () -> PROTOCOL_VERSION,
             PROTOCOL_VERSION::equals,
             PROTOCOL_VERSION::equals

@@ -9,6 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.*;
 import net.minecraft.world.entity.LivingEntity;
 
+import java.util.Objects;
+
 public class BODamageSources {
     public static final ResourceKey<DamageType> VACUUM_KEY = key("vacuum");
     public static final ResourceKey<DamageType> FREEZE_KEY = key("freeze");
@@ -16,7 +18,7 @@ public class BODamageSources {
     public static final ResourceKey<DamageType> HURT_KEY = key("hurt");
 
     private static ResourceKey<DamageType> key(String id) {
-        return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(BeyondOxygen.MODID, id));
+        return ResourceKey.create(Registries.DAMAGE_TYPE, Objects.requireNonNull(ResourceLocation.tryBuild(BeyondOxygen.MODID, id)));
     }
 
     private static DamageSource vacuum, freeze, burn, hurt;

@@ -21,32 +21,32 @@ public class BODimensionTagsProvider extends DataRegistryTagsProvider<Level> {
     @Override
     protected void addTags(HolderLookup.@NotNull Provider lookupProvider) {
         this.tag(BODimensionTags.UNBREATHABLE)
-                .addOptional(new ResourceLocation("cosmos", "solar_system"))
-                .addOptional(new ResourceLocation("cosmos", "mercury_wasteland"))
-                .addOptional(new ResourceLocation("cosmos", "venuslands"))
-                .addOptional(new ResourceLocation("cosmos", "earth_moon"))
-                .addOptional(new ResourceLocation("cosmos", "marslands"))
-                .addOptional(new ResourceLocation("cosmos", "jupiterlands"))
-                .addOptional(new ResourceLocation("cosmos", "europa_lands"))
-                .addOptional(new ResourceLocation("cosmos", "saturn_lands"))
-                .addOptional(new ResourceLocation("cosmos", "uranus_lands"))
-                .addOptional(new ResourceLocation("cosmos", "neptune_lands"))
-                .addOptional(new ResourceLocation("cosmos", "plutowastelands"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "solar_system"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "mercury_wasteland"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "venuslands"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "earth_moon"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "marslands"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "jupiterlands"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "europa_lands"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "saturn_lands"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "uranus_lands"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "neptune_lands"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "plutowastelands"))
 
-                .addOptional(new ResourceLocation("cosmos", "alpha_system"))
-                .addOptional(new ResourceLocation("cosmos", "b_1400_centauri"))
-                .addOptional(new ResourceLocation("cosmos", "gaia_bh_1"))
-                .addOptional(new ResourceLocation("cosmos", "glacio_lands"))
-                .addOptional(new ResourceLocation("cosmos", "j_1407blands"))
-                .addOptional(new ResourceLocation("cosmos", "j_1900"));
+                .addOptional(ResourceLocation.tryBuild("cosmos", "alpha_system"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "b_1400_centauri"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "gaia_bh_1"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "glacio_lands"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "j_1407blands"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "j_1900"));
 
         this.tag(BODimensionTags.COLD)
-                .addOptional(new ResourceLocation("cosmos", "plutowastelands"))
-                .addOptional(new ResourceLocation("cosmos", "glacio_lands"));
+                .addOptional(ResourceLocation.tryBuild("cosmos", "plutowastelands"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "glacio_lands"));
 
         this.tag(BODimensionTags.HOT)
-                .addOptional(new ResourceLocation("cosmos", "mercury_wasteland"))
-                .addOptional(new ResourceLocation("cosmos", "venuslands"));
+                .addOptional(ResourceLocation.tryBuild("cosmos", "mercury_wasteland"))
+                .addOptional(ResourceLocation.tryBuild("cosmos", "venuslands"));
 
     }
 }

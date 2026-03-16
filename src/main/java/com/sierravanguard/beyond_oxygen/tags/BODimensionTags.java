@@ -12,7 +12,7 @@ public class BODimensionTags {
     public static final TagKey<Level> HOT = create("hot");
 
     private static TagKey<Level> create(String path) {
-        return create(new ResourceLocation(BeyondOxygen.MODID, path));
+        return create(ResourceLocation.tryBuild(BeyondOxygen.MODID, path));
     }
 
     private static TagKey<Level> create(ResourceLocation location) {
