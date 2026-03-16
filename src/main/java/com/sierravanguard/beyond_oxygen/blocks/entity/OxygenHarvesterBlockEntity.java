@@ -1,6 +1,5 @@
 package com.sierravanguard.beyond_oxygen.blocks.entity;
 
-import com.sierravanguard.beyond_oxygen.BOConfig;
 import com.sierravanguard.beyond_oxygen.registry.BOBlockEntities;
 import com.sierravanguard.beyond_oxygen.registry.BOFluids;
 import com.sierravanguard.beyond_oxygen.utils.HermeticArea;
@@ -9,11 +8,11 @@ import com.sierravanguard.beyond_oxygen.utils.HermeticAreaServerManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -22,7 +21,6 @@ import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,11 +32,11 @@ public class OxygenHarvesterBlockEntity extends BlockEntity {
     private static final int ENERGY_COST_PER_HARVEST = 50;
     private static final int OXYGEN_PER_PLANT = 1;
     private static final int MAX_SCAN_PER_TICK = 32;
+    private final ArrayList<BlockPos> SURROUNDING_BLOCKS;
 
     private long savedAreaId = -1;
     private float oxygenLastHarvested = 0;
     private int assignmentCooldown = 0;
-    private boolean isInHarvestCycle = false;
 
     private HermeticArea cachedSealedArea = null;
     private Iterator<BlockPos> scanIterator = null;
@@ -80,6 +78,7 @@ public class OxygenHarvesterBlockEntity extends BlockEntity {
 
     public OxygenHarvesterBlockEntity(BlockPos pos, net.minecraft.world.level.block.state.BlockState state) {
         super(BOBlockEntities.OXYGEN_HARVESTER.get(), pos, state);
+        SURROUNDING_BLOCKS = new ArrayList<>(List.of(getBlockPos().above(), getBlockPos().below(), getBlockPos().north(), getBlockPos().south(), getBlockPos().east(), getBlockPos().west()));
     }
 
     public static void tick(Level level, BlockPos pos, net.minecraft.world.level.block.state.BlockState state, BlockEntity be) {
@@ -99,21 +98,18 @@ public class OxygenHarvesterBlockEntity extends BlockEntity {
         if (harvester.cachedSealedArea == null || !harvester.cachedSealedArea.isHermetic() || harvester.cachedSealedArea.isDirty()) {
             harvester.cachedSealedArea = null;
             harvester.savedAreaId = -1;
-            return;
-        }
-
-        if (harvester.savedAreaId != harvester.cachedSealedArea.getId())
+        } else if (harvester.savedAreaId != harvester.cachedSealedArea.getId()) {
             harvester.savedAreaId = harvester.cachedSealedArea.getId();
+        }
 
         boolean canHarvest = harvester.energyStorage.getEnergyStored() >= ENERGY_COST_PER_HARVEST &&
                 harvester.getOxygenTankSpace() >= OXYGEN_PER_PLANT;
 
-        if (canHarvest || harvester.isInHarvestCycle) {
+        if (canHarvest) {
             harvester.harvest(serverLevel);
         } else {
             harvester.oxygenLastHarvested = 0;
             harvester.scanIterator = null;
-            harvester.isInHarvestCycle = false;
         }
     }
 
@@ -131,20 +127,19 @@ public class OxygenHarvesterBlockEntity extends BlockEntity {
     private void harvest(ServerLevel serverLevel) {
         if (cachedSealedArea == null) {
             findAndAssignHermeticArea(serverLevel);
-            if (cachedSealedArea == null) return;
         }
 
-        if (!cachedSealedArea.isHermetic() || cachedSealedArea.isDirty()) {
+        if (cachedSealedArea == null || !cachedSealedArea.isHermetic() || cachedSealedArea.isDirty()) {
             cachedSealedArea = null;
-            isInHarvestCycle = false;
             scanIterator = null;
-            return;
         }
 
-        if (scanIterator == null || !isInHarvestCycle) {
-            List<BlockPos> blocks = new ArrayList<>(cachedSealedArea.getBlocks());
+        if (scanIterator == null) {
+            List<BlockPos> blocks = SURROUNDING_BLOCKS;
+            if (cachedSealedArea != null) {
+                blocks = new ArrayList<>(cachedSealedArea.getBlocks());
+            }
             scanIterator = blocks.iterator();
-            isInHarvestCycle = true;
         }
 
         Optional<Fluid> oxygenFluid = BOFluids.getOxygenFluid();
@@ -158,7 +153,7 @@ public class OxygenHarvesterBlockEntity extends BlockEntity {
                     energyStorage.getEnergyStored() >= ENERGY_COST_PER_HARVEST) {
 
                 BlockPos checkPos = scanIterator.next();
-                var state = serverLevel.getBlockState(checkPos);
+                BlockState state = serverLevel.getBlockState(checkPos);
                 if (state.is(BlockTags.LEAVES) || state.is(BlockTags.CROPS)) {
                     int filled = oxygenTank.fill(new FluidStack(oxygenFluid.get(), OXYGEN_PER_PLANT), IFluidHandler.FluidAction.EXECUTE);
                     if (filled > 0) energyStorage.extractEnergy(ENERGY_COST_PER_HARVEST, false);
@@ -170,7 +165,6 @@ public class OxygenHarvesterBlockEntity extends BlockEntity {
 
         if (!scanIterator.hasNext()) {
             scanIterator = null;
-            isInHarvestCycle = false;
         }
         oxygenLastHarvested = oxygenHarvested;
     }
