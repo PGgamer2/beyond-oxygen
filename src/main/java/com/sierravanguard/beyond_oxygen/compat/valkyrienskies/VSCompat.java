@@ -129,7 +129,7 @@ public class VSCompat {
         return cryoBed.worldPos();
     }
 
-    public static FluidType getEntityFluidType(Entity entity) {
+    public static FluidType getEyeFluidType(Entity entity) {
         Level level = entity.level();
         Iterable<Ship> ships = VSGameUtilsKt.getShipsIntersecting(level, AABB.ofSize(entity.getEyePosition(), 1, 1, 1));
 

@@ -24,8 +24,6 @@ import net.minecraftforge.fluids.FluidType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-import java.util.*;
-
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity implements ILivingEntityExtension {
     @Unique
@@ -94,7 +92,7 @@ public abstract class LivingEntityMixin extends Entity implements ILivingEntityE
     @Override
     public void beyond_oxygen$breathe(LivingBreatheEvent event) {
         LivingEntity self = beyond_oxygen$self();
-        FluidType fluidtype = CompatUtils.getEntityFluidType(self);
+        FluidType fluidtype = CompatUtils.getEyeFluidType(self);
 
         boolean isAir = fluidtype.isAir() || self.level().getBlockState(BlockPos.containing(self.getX(), self.getEyeY(), self.getZ())).is(Blocks.BUBBLE_COLUMN)
                 || beyond_oxygen$getAreasIn().stream().anyMatch(HermeticArea::hasAir) || self.hasEffect(BOEffects.OXYGEN_SATURATION.get());

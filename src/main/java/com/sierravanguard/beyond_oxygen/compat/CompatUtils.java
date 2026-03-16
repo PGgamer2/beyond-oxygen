@@ -81,8 +81,8 @@ public class CompatUtils {
         return cryoBed.worldPos();
     }
 
-    public static FluidType getEntityFluidType(Entity entity) {
-        if (CompatLoader.VALKYRIEN_SKIES.isLoaded()) return VSCompat.getEntityFluidType(entity);
+    public static FluidType getEyeFluidType(Entity entity) {
+        if (CompatLoader.VALKYRIEN_SKIES.isLoaded()) return VSCompat.getEyeFluidType(entity);
         return entity.getEyeInFluidType();
     }
 }
