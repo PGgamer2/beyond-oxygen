@@ -132,11 +132,9 @@ public class VSCompat {
     public static FluidType getEyeFluidType(Entity entity) {
         Level level = entity.level();
         Iterable<Ship> ships = VSGameUtilsKt.getShipsIntersecting(level, AABB.ofSize(entity.getEyePosition(), 1, 1, 1));
+        FluidType fluidType = level.getFluidState(BlockPos.containing(entity.getEyePosition())).getFluidType();
 
-        var ref = new Object() {
-            FluidType fluidType = level.getFluidState(BlockPos.containing(entity.getEyePosition())).getFluidType();
-        };
-        ships.forEach(ship -> {
+        for (Ship ship : ships) {
             Vector3d shipPos = ship.getTransform()
                     .getWorldToShip()
                     .transformPosition(entity.getX(), entity.getEyeY(), entity.getZ(), new Vector3d());
@@ -149,10 +147,11 @@ public class VSCompat {
 
             FluidType shipFluidType = level.getFluidState(transBlockPos).getFluidType();
             if (!shipFluidType.isAir()) {
-                ref.fluidType = shipFluidType;
+                fluidType = shipFluidType;
+                break;
             }
-        });
+        }
 
-        return ref.fluidType;
+        return fluidType;
     }
 }
