@@ -82,7 +82,12 @@ public class CompatUtils {
     }
 
     public static FluidType getEyeFluidType(Entity entity) {
-        if (CompatLoader.VALKYRIEN_SKIES.isLoaded()) return VSCompat.getEyeFluidType(entity);
+        if (CompatLoader.VALKYRIEN_SKIES.isLoaded()) {
+            double origX = entity.getX();
+            double origY = entity.getEyeY() - 0.1111111119389534;
+            double origZ = entity.getZ();
+            return VSCompat.getInFluid(entity.level(), origX, origY, origZ, entity.getBbWidth()).getFluidType();
+        }
         return entity.getEyeInFluidType();
     }
 }
