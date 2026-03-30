@@ -34,6 +34,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -171,7 +172,7 @@ public class ModEvents {
         ((ILivingEntityExtension) event.getEntity()).beyond_oxygen$tick();
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onLivingBreatheEvent(LivingBreatheEvent event) {
         ((ILivingEntityExtension) event.getEntity()).beyond_oxygen$breathe(event);
     }
